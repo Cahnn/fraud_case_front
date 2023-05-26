@@ -1,0 +1,225 @@
+<template>
+	<view class="center">
+		<view class="logo" @click="goNextPage" :hover-class="!userInfo ? 'logo-hover' : ''">
+			<img class="logo-img" :src="userInfo.avatar ? getAvatar(userInfo.avatar) :avatarUrl"></img>
+			<view class="logo-title">
+				<view class="uer-name">您好，{{userInfo.username ? userInfo.username : '您未登录'}}</view>
+				<!-- <text class="go-login-navigat-arrow">&#xe65e;</text> -->
+				<view class="size" v-if="login">点击查看个人信息></view>
+			</view>
+			
+		</view>
+		
+		<navigator
+		:url="'./components/help'"  
+		class="center-list-item border-bottom">
+			<text class="list-icon">&#xe60b;</text>
+			<text class="list-text">反馈与帮助</text>
+			<text class="navigat-arrow">&#xe65e;</text>
+		</navigator>
+		<!-- <navigator
+		:url="'/pages/accountManagement/accountManagement?userInfo='+ encodeURIComponent(JSON.stringify(userInfo))"  
+		class="center-list-item border-bottom">
+			<text class="list-icon">&#xe65f;</text>
+			<text class="list-text">服务条款及隐私</text>
+			<text class="navigat-arrow">&#xe65e;</text>
+		</navigator> -->
+		<navigator
+		:url="'./components/aboutUs'"  
+		class="center-list-item border-bottom">
+			<text class="list-icon">&#xe614;</text>
+			<text class="list-text">关于应用</text>
+			<text class="navigat-arrow">&#xe65e;</text>
+		</navigator>
+		<navigator
+		 v-if="login"
+		:url="'./components/settings'"  
+		class="center-list-item border-bottom">
+			<text class="list-icon">&#xe60f;</text>
+			<text class="list-text">设置</text>
+			<text class="navigat-arrow">&#xe65e;</text>
+		</navigator>
+	</view>
+</template>
+
+<script>
+	export default {
+		// computed: mapState(['hasLogin','userInfo']),
+		data() {
+			return {
+				login: false,
+				avatarUrl: '/static/logo.png',
+				userInfo: {}
+			}
+		},
+		onShow() {
+			this.getStorageUser()
+			if(!this.userInfo){
+				this.login = false
+			}else{
+				this.login = true
+			}
+		},
+		methods: {
+			getAvatar(URL){
+				let resUrl = String(URL).replace(/\\\\/g,'/')
+				return resUrl
+			},
+			goNextPage() {
+				if (!uni.getStorageSync('userInfo')) {
+					uni.navigateTo({
+						url:'../login/login'
+					})
+				}else{
+					uni.navigateTo({
+						url:'../userMess/userMess'
+					})
+				}
+			},
+			getStorageUser(){
+				try{
+					this.userInfo = uni.getStorageSync('userInfo')
+				}catch(e){
+					console.log('获取缓存失败',e)
+				}
+			}
+		}
+	}
+</script>
+
+<style>
+	/* #ifndef APP-PLUS-NVUE */
+	@font-face {
+		font-family: texticons;
+		font-weight: normal;
+		font-style: normal;
+		src: url('~@/static/text-icon.ttf') format('truetype');
+	}
+
+	page {
+		background-color: #f8f8f8;
+	}
+
+	/* #endif*/
+
+	/* 解决头条小程序字体图标不显示问题，因为头条运行时自动插入了span标签，且有全局字体 */
+	/* #ifdef MP-TOUTIAO */
+	text :not(view) {
+		font-family: texticons;
+	}
+
+	/* #endif */
+
+	.center {
+		flex: 1;
+		flex-direction: column;
+		background-color: #f8f8f8;
+	}
+
+	.logo {
+		width: 750upx;
+		height: 440upx;
+		padding: 20upx;
+		background-color: #2F85FC;
+		/* flex-direction: row;
+		align-items: center; */
+		position: relative;
+	}
+
+	.logo-img {
+		width: 220upx;
+		height: 220upx;
+		border-radius: 150upx;
+		z-index: 999;
+		margin: 0 auto;
+	}
+
+	.logo-title {
+		height: 150upx;
+		margin-left: 20upx;
+		text-align: center;
+	}
+
+	.uer-name {
+		margin-top: 10px;
+		height: 60upx;
+		/* line-height: 60upx; */
+		font-size: 40upx;
+		color: #FFFFFF;
+	}
+	.size{
+		font-size: 14px;
+		color: #FFFFFF;
+	}
+
+	.go-login-navigat-arrow {
+		height: 90upx;
+		width: 40upx;
+		line-height: 90upx;
+		color: #555;
+		text-align: right;
+		font-family: texticons;
+		font-size: 38upx;
+		margin-right: 10px;
+	}
+
+	.login-title {
+		height: 150upx;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-left: 20upx;
+	}
+
+	.center-list {
+		flex-direction: column;
+		background-color: #FFFFFF;
+		margin-top: 20upx;
+		width: 750upx;
+	}
+
+	.center-list-item {
+		height: 90upx;
+		width: 750upx;
+		flex-direction: row;
+		padding: 0upx 20upx;
+		background-color: #FFFFFF;
+	}
+
+	.border-bottom {
+		border-bottom-width: 1upx;
+		border-color: #c8c7cc;
+		border-bottom-style: solid;
+	}
+
+	.list-icon {
+		width: 40upx;
+		height: 90upx;
+		line-height: 90upx;
+		font-size: 34upx;
+		color: #2F85FC;
+		text-align: center;
+		font-family: texticons;
+		margin-right: 20upx;
+	}
+
+	.list-text {
+		height: 90upx;
+		line-height: 90upx;
+		font-size: 34upx;
+		color: #555;
+		flex: 1;
+	}
+
+	.navigat-arrow {
+		height: 90upx;
+		width: 40upx;
+		line-height: 90upx;
+		font-size: 34upx;
+		color: #555;
+		text-align: right;
+		font-family: texticons;
+		float: right;
+		margin-right: 25px;
+	}
+</style>
